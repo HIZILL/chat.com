@@ -1,15 +1,15 @@
 # CHAT.COM
 
-Welcome to CHAT.COM, a messaging application that allows you to connect and communicate with friends, family, and colleagues in real-time. This repository contains the source code and documentation for the CHAT.COM application.
+Welcome to CHAT.COM, a messaging application that allows you to connect and communicate with friends, family, co-workers, and any others in real-time. This repository contains the source code and documentation for the CHAT.COM application.
 
 ## Features
-- Secure and private messaging
-- Real-time chat functionality
-- User-friendly interface
-- Group chats and private conversations
-- Online presence status
-- Message notifications
-- File sharing and multimedia support
+- Secure and private messaging, feel safe chatting with others 
+- Real-time chat functionality, communicate with friends in real time
+- User-friendly interface, simple to use
+- Group chats and private conversations, manage your group's communication with others easily
+- Online presence status, see who is currently available
+- Message notifications, don't miss any messages from friends 
+- File sharing and multimedia support, share whatever you want 
 
 ## Installation
 
