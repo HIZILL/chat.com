@@ -124,6 +124,9 @@
 </head>
 <body>
 <?php
+
+    session_start();
+    var_dump($_SESSION);
     $host = "localhost";
     $username = "root";
     $password = "";
@@ -131,6 +134,10 @@
     $conn = new mysqli($host, $username, $password, $database);
     if ($conn->connect_error) {
         die("Błąd połączenia: " . $conn->connect_error);
+    }
+
+    if(isset($_SESSION['id_user'])){
+        echo 'Zostałeś zalogowany jako'. $_SESSION['user_name']. ' '. $_SESSION['user_surname'];
     }
 
     echo

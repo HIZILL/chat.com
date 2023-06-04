@@ -24,6 +24,14 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     // Ustawienie trybu raportowania błędów na wyjątki
     $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
+    $check_for_user = $conn->prepare("SELECT id_user from users WHERE user_email = :email");
+    $check_for_user->bindParam(':email', $email);
+    $check_for_user->execute();
+    
+
+    if($check_for_user->rowCount() != 0)
+        throw new Exception("W bazie danych znajduje się użytkownik o adresie email: ". $email);
+
     // Przygotowanie zapytania SQL z parametrami
     $sql = "INSERT INTO users (user_name, user_surname, user_email, user_password, user_password_salt, user_dateofbirth) VALUES (:name, :surname, :email, :password, :salt, :dateofbirth)";
     $stmt = $conn->prepare($sql);
@@ -41,7 +49,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $stmt->execute();
 
     echo "Dane zostały wstawione do tabeli.";
-    } catch(PDOException $e) {
+    } catch(Exception $e) {
     echo "Wystąpił błąd: " . $e->getMessage();
     }
 

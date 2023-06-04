@@ -1,6 +1,8 @@
 <?php
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
+    
+
     $login = $_POST['login'];
     $password = $_POST['password'];
 
@@ -15,7 +17,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         // Ustawienie trybu raportowania błędów na wyjątki
         $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
-        $sql = "SELECT user_password, user_password_salt FROM users WHERE user_email=:login";
+        $sql = "SELECT user_password, user_password_salt, id_user, user_name, user_surname FROM users WHERE user_email=:login";
         $stmt = $conn->prepare($sql);
 
         // Przypisanie wartości parametrów
@@ -33,8 +35,13 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $hashedPassword = hash('sha512', $_POST['password'] . $result['user_password_salt']);
 
         if ($hashedPassword === $result['user_password']) {
-            // setcookie('login',$login,time()+40);
+            session_start();
             echo "Zalogowano";
+            $_SESSION['id_user']=$result['id_user'];
+            $_SESSION['user_name']=$result['user_name'];
+            $_SESSION['user_surname']=$result['user_surname'];
+            header('Location: ./second_page.php');
+            exit();
 
         } else {
             echo "Błędny login lub hasło";
@@ -182,7 +189,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         <img src="./src/back-icon.png" alt="powrót" class="back-icon">
     </a>
     <h2>ZALOGUJ SIĘ</h2>
-    <form method="post" action="second_page.php">
+    <form method="post" action="./login.php">
         <sub> E-MAIL</sub><br>
         <input type="email" autofocus="" required="required" name="login" id="login"><br>
         <sub>HASŁO</sub><br>
