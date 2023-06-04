@@ -193,7 +193,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         <sub> E-MAIL</sub><br>
         <input type="email" autofocus="" required="required" name="login" id="login"><br>
         <sub>HASŁO</sub><br>
-        <input type="password" name="password" id="password" autocomplete="current-password" required="" id="id_password">
+        <input type="password" name="password" autocomplete="current-password" required="" id="id_password">
         <i class="far fa-eye" id="togglePassword" style="margin-left: -10px; cursor: pointer;"></i><br><br>
         <a href="#"><sub>ZAPOMNIAŁEM HASŁA</sub></a><br>
         <button type="submit">ZALOGUJ SIĘ</button>
