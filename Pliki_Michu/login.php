@@ -44,7 +44,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             exit();
 
         } else {
-            echo "Błędny login lub hasło";
+            echo 'Błędny login lub hasło';
         }
     } catch (PDOException $e) {
         echo "Wystąpił błąd: " . $e->getMessage();
@@ -52,14 +52,20 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 }
 ?>
 <!DOCTYPE html>
-<html lang="en">
+<html lang="pl">
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>CHAT.COM · LOGOWANIE</title>
     <link href='https://fonts.googleapis.com/css?family=Inter' rel='stylesheet'>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.13.0/css/all.min.css">
+    <link rel="icon" href="./src/chat-icon.png">
+    <meta name="title" content="CHAT.COM · LOGOWANIE">
+    <meta name="description" content="CHAT.COM to szybki, bezpieczny i zaawansowany komunikator. Przesyłaj wiadomości oraz kontaktuj się z najbliższymi. Dołącz do Chat.com już teraz!">
+    <meta name="keywords" content="komunikator, czat, aplikacja, wiadomości, rozmowy, komunikacja online, współpraca, bezpieczeństwo, chat, messenger, chatapp">
+    <meta name="robots" content="index, follow">
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
     <style>
         body{
             background-color: #141414;
@@ -71,6 +77,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             transition: 0.2s;
             top: 5%;
             left: 5%;
+            cursor: pointer;
         }
         .back-icon:active{
             scale: 0.8;
@@ -171,8 +178,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         }
         @media only screen and (max-width: 600px) {
             h4 {position: absolute;
-            font-size: 20px;
-            top: 90%;
+            font-size: 12px;
+            top: 5%;
             margin-left: auto;
             margin-right: auto;
             left: 0;
@@ -185,7 +192,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 </head>
 <body>
     <!-- ZMIEŃ HREFA-->
-    <a href="http://127.0.0.1/Zadania/Pliki_Michu/main_page.html">
+    <a  href="./main_page.html">
         <img src="./src/back-icon.png" alt="powrót" class="back-icon">
     </a>
     <h2>ZALOGUJ SIĘ</h2>

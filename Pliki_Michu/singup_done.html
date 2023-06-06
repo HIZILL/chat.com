@@ -18,6 +18,7 @@
             font-family: 'Inter';
             background-color: #141414;
             text-align: center;
+            padding: 15px;
         }
         p{
             position: absolute;
@@ -79,12 +80,6 @@
             background-color: #141414;
             border: #8F38FE 1px solid;
         }
-        .singup-btn{
-            background: rgb(20,20,20);
-            background: linear-gradient(0deg, rgba(20,20,20,1) 0%, rgba(86,43,141,1) 1%, rgba(145,64,248,1) 49%, rgba(145,64,248,1) 90%);
-            -webkit-filter: brightness(90%) contrast(90%) blur(2px) grayscale(10%);
-            filter: brightness(90%) contrast(90%)  grayscale(10%);
-        }
         .container{
             margin-top: 450px;
         }
@@ -94,15 +89,17 @@
             cursor: pointer;
             margin: 1px;
         }
+        @media only screen and (max-width: 600px){
+            p{
+                font-size: 30px;
+            }
+        }
     </style>
 </head>
 <body>
     <div class="container">
-        <p>CHAT.COM</p>
-        <!-- ZMIEŃ HREFA-->
-        <a href="./login.php"><button class="login-btn">ZALOGUJ SIĘ</button></a>
-        <!-- ZMIEŃ HREFA-->
-        <a href="./singup.php"><button class="singup-btn">ZAREJESTRUJ SIĘ</button></a>
+        <p>Dziękujemy za zarejestrowanie się w CHAT.COM, możesz teraz powrócić do strony głównej</p>
+        <a href="./main_page.html"><button class="login-btn">STRONA GŁÓWNA</button></a>
     </div>
 </body>
 </html>

@@ -126,7 +126,6 @@
 <?php
 
     session_start();
-    var_dump($_SESSION);
     $host = "localhost";
     $username = "root";
     $password = "";
@@ -137,7 +136,7 @@
     }
 
     if(isset($_SESSION['id_user'])){
-        echo 'Zostałeś zalogowany jako'. $_SESSION['user_name']. ' '. $_SESSION['user_surname'];
+        echo 'Zostałeś zalogowany jako' . ' '. $_SESSION['user_name']. ' '. $_SESSION['user_surname'];
     }
 
     echo

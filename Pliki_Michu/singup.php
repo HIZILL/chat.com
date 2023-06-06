@@ -1,14 +1,12 @@
 <?php
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
-
-    $imie = ucfirst(strtolower($_POST['firstname']));
-    $nazwisko = ucfirst(strtolower($_POST['surname']));
+    $imie = $_POST['firstname'];
+    $nazwisko = $_POST['surname'];
     $data_urodzenia = $_POST['date_of_birth'];
     $email = $_POST['email'];
     $salt = bin2hex(random_bytes(32));
     $hashedPassword = hash('sha512', $_POST['password'].$salt);
-
 
     // Dane do połączenia z bazą danych
     $servername = "localhost";
@@ -16,41 +14,59 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $password = "";
     $dbname = "chatcom_db";
 
-
-
     try {
+        
+    // Sprawdzenie długości hasła
+        if (strlen($_POST['password']) < 8) {
+            throw new Exception("Hasło jest zbyt krótkie. Wymagane jest minimum 8 znaków");
+        }
+
+        // Sprawdzenie, czy hasło zawiera zarówno liczby, znaki tekstowe i znaki specjalne
+        if (!preg_match('/\d/', $_POST['password']) || !preg_match('/[A-Za-z]/', $_POST['password']) || !preg_match('/[^A-Za-z0-9]/', $_POST['password'])) {
+            throw new Exception("Hasło musi zawierać zarówno liczby, litery oraz znaki specjalne.");
+        }
+
+    // Sprawdzenie wieku
+        $dob = new DateTime($data_urodzenia);
+        $today = new DateTime();
+        $difference = $today->diff($dob);
+        $age = $difference->y;
+
+        if ($age < 15) {
+            throw new Exception("Musisz mieć co najmniej 15 lat, aby się zarejestrować.");
+        }
+
     // Tworzenie połączenia z bazą danych za pomocą PDO
-    $conn = new PDO("mysql:host=$servername;dbname=$dbname", $username, $password);
+        $conn = new PDO("mysql:host=$servername;dbname=$dbname", $username, $password);
     // Ustawienie trybu raportowania błędów na wyjątki
-    $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+        $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
-    $check_for_user = $conn->prepare("SELECT id_user from users WHERE user_email = :email");
-    $check_for_user->bindParam(':email', $email);
-    $check_for_user->execute();
-    
+        $check_for_user = $conn->prepare("SELECT id_user FROM users WHERE user_email = :email");
+        $check_for_user->bindParam(':email', $email);
+        $check_for_user->execute();
 
-    if($check_for_user->rowCount() != 0)
-        throw new Exception("W bazie danych znajduje się użytkownik o adresie email: ". $email);
+        if ($check_for_user->rowCount() != 0) {
+            throw new Exception("W bazie danych znajduje się użytkownik o adresie email: ". $email);
+        }
 
     // Przygotowanie zapytania SQL z parametrami
-    $sql = "INSERT INTO users (user_name, user_surname, user_email, user_password, user_password_salt, user_dateofbirth) VALUES (:name, :surname, :email, :password, :salt, :dateofbirth)";
-    $stmt = $conn->prepare($sql);
+        $sql = "INSERT INTO users (user_name, user_surname, user_email, user_password, user_password_salt, user_dateofbirth) VALUES (:name, :surname, :email, :password, :salt, :dateofbirth)";
+        $stmt = $conn->prepare($sql);
 
-
-    // Przypisanie wartości parametrów
-    $stmt->bindParam(':name', $imie);
-    $stmt->bindParam(':surname', $nazwisko);
-    $stmt->bindParam(':email', $email);
-    $stmt->bindParam(':password', $hashedPassword);
-    $stmt->bindParam(':salt', $salt);
-    $stmt->bindParam(':dateofbirth', $data_urodzenia);
+        // Przypisanie wartości parametrów
+        $stmt->bindParam(':name', $imie);
+        $stmt->bindParam(':surname', $nazwisko);
+        $stmt->bindParam(':email', $email);
+        $stmt->bindParam(':password', $hashedPassword);
+        $stmt->bindParam(':salt', $salt);
+        $stmt->bindParam(':dateofbirth', $data_urodzenia);
 
     // Wykonanie zapytania
-    $stmt->execute();
+        $stmt->execute();
 
-    echo "Dane zostały wstawione do tabeli.";
-    } catch(Exception $e) {
-    echo "Wystąpił błąd: " . $e->getMessage();
+        header('Location: ./singup_done.html');
+    } catch (Exception $e) {
+        echo "Wystąpił błąd: " . $e->getMessage();
     }
 
     // Zamknięcie połączenia
@@ -60,14 +76,20 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
 
 <!DOCTYPE html>
-<html lang="en">
+<html lang="pl">
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>CHAT.COM · REJESTRACJA</title>
     <link href='https://fonts.googleapis.com/css?family=Inter' rel='stylesheet'>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.13.0/css/all.min.css">
+    <link rel="icon" href="./src/chat-icon.png">
+    <meta name="title" content="CHAT.COM · LOGOWANIE">
+    <meta name="description" content="CHAT.COM to szybki, bezpieczny i zaawansowany komunikator. Przesyłaj wiadomości oraz kontaktuj się z najbliższymi. Dołącz do Chat.com już teraz!">
+    <meta name="keywords" content="komunikator, czat, aplikacja, wiadomości, rozmowy, komunikacja online, współpraca, bezpieczeństwo, chat, messenger, chatapp">
+    <meta name="robots" content="index, follow">
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
     <style>
         body{
             background-color: #141414;
@@ -79,6 +101,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             transition: 0.2s;
             top: 5%;
             left: 5%;
+            cursor: pointer;
         }
         .back-icon:active{
             scale: 0.8;
@@ -209,7 +232,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 </head>
 <body>
     <!-- ZMIEŃ HREFA-->
-    <a href="http://127.0.0.1/Zadania/Pliki_Michu/main_page.html">
+    <a href="./main_page.html">
         <img src="./src/back-icon.png" alt="powrót" class="back-icon">
     </a>
     <h4>CHAT.COM</h4>
