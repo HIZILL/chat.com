@@ -99,6 +99,12 @@ ALTER TABLE `users`
 --
 ALTER TABLE `messages`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  
+  
+-- AUTO_INCREMENT for table `friends`
+--
+ALTER TABLE `friends`
+  MODIFY `FriendshipID` int(11) NOT NULL AUTO_INCREMENT;
 
 
 -- AUTO_INCREMENT for table `friends`
