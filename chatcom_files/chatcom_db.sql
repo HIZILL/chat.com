@@ -31,7 +31,7 @@ CREATE TABLE `friends` (
   `FriendshipID` int(11) NOT NULL,
   `UserID` int(11) DEFAULT NULL,
   `FriendID` int(11) DEFAULT NULL,
-  `FriendshipDate` date DEFAULT NULL
+  `FriendshipDate` datetime DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
@@ -105,6 +105,8 @@ ALTER TABLE `messages`
 --
 ALTER TABLE `friends`
   MODIFY `FriendshipID` int(11) NOT NULL AUTO_INCREMENT;
+
+
 --
 -- AUTO_INCREMENT for table `users`
 --
