@@ -125,94 +125,109 @@
 <body>
 <?php
 
-    session_start();
-    $host = "localhost";
-    $username = "root";
-    $password = "";
-    $database = "chatcom_db";
-    $conn = new mysqli($host, $username, $password, $database);
-    if ($conn->connect_error) {
-        die("Błąd połączenia: " . $conn->connect_error);
-    }
+session_start();
+$host = "localhost";
+$username = "root";
+$password = "";
+$database = "chatcom_db";
+$conn = new mysqli($host, $username, $password, $database);
+if ($conn->connect_error) {
+    die("Błąd połączenia: " . $conn->connect_error);
+}
 
-    if(isset($_SESSION['id_user'])){
-        echo 'Zostałeś zalogowany jako' . ' '. $_SESSION['user_name']. ' '. $_SESSION['user_surname'];
-    }
+if (isset($_SESSION['id_user'])) {
+    echo 'Zostałeś zalogowany jako' . ' ' . $_SESSION['user_name'] . ' ' . $_SESSION['user_surname'];
+}
 
-    echo
-    '<nav>
-     <h1>Chat.com</h1>
-    </nav>';
+echo '
+<nav>
+    <h1>Chat.com</h1>
+</nav>';
 
-    echo '<main>';
-    // ! WYŚWIETLA WSZYSTKICH UŻYTKOWNIKÓW. NAWET OSOBE KTÓRA SIE ZALOGOWAŁA. TO NIE DOBRZE PONIEWAŻ MOŻNA DODAĆ DO ZNAJOMYCH SAMEGO SIEBIE.
-    // $sql = "SELECT user_name, user_surname FROM `users`;";
-    // $result = $conn->query($sql);
-    // if ($result->num_rows > 0) {
-    //     while ($row = $result->fetch_assoc()) {
-    //         $user_2 = $row["user_name"].'<br>'.$row["user_surname"];
-    //         echo '
-    //         <div class="rectangle">
-    //             <div class="left">
-    //                 <p>'.$user_2.'</p>
-    //             </div>
-    //             <div class="right">
-    //                 <img src="src/remove-user_2.png" alt="remove user" class="icon">
-    //                 <img src="src/copy-writing_2.png" alt="write to user" class="icon">
-    //             </div>
-    //         </div>';
-    //         }
-    //     }
+echo '<main>';
 
-
-        if(isset($_POST['add_friends'])){
-    $sql = "SELECT user_name, user_surname FROM `users`;";
+if (isset($_POST['add_friends'])) {
+    $sql = "SELECT id_user, user_name, user_surname FROM `users`;";
     $result = $conn->query($sql);
-            if ($result->num_rows > 0) {
+    if ($result->num_rows > 0) {
+        echo '
+        <table class="contact">
+        <tr>
+            <td>Wybierz znajomego
+            <img src="./src/close.png" class="icon_small right" id="close"></td>
+        </tr>
+        </table>';
 
-                echo '
+        while ($row = $result->fetch_assoc()) {
+            $id_user = $row["id_user"];
+            $user_1 = $row["user_name"] . ' ' . $row["user_surname"];
+
+            echo '
+            <form method="post" action="">
                 <table class="contact">
-                <tr>
-                    <td>Wybierz znajomego
-                    <img src="./src/close.png" class="icon_small right" id="close"></td>
-                </tr>
-                </table>';
-
-                while ($row = $result->fetch_assoc()) {
-                    $user_1 = $row["user_name"].' '.$row["user_surname"];
-
-                echo '
-                    <table class="contact">
-                        <tr>
-                            <td >'.$user_1.'</td>
-                        </tr>
-                    </table>
-                ';
-            }
+                    <tr>
+                        <td>' . $user_1 . '</td>
+                        <td>
+                            <input type="hidden" name="id_user" value="' . $id_user . '">
+                            <input type="submit" name="add_friend" value="Dodaj">
+                        </td>
+                    </tr>
+                </table>
+            </form>
+            ';
         }
     }
+}
 
-        echo '<div class="height"></div>';
-    echo '</main>';
-    ?>
+echo '<div class="height"></div>';
+echo '</main>';
 
+if (isset($_POST['add_friend'])) {
+    $id_user = $_POST['id_user'];
+    $current_user_id = $_SESSION['id_user'];
 
-    <footer>
+    // Sprawdzanie czy znajomy nie istnieje już w bazie
+    $check_friend_query = "SELECT * FROM friends WHERE UserID = '$current_user_id' AND FriendID = '$id_user'";
+    $check_friend_result = $conn->query($check_friend_query);
+
+    if ($check_friend_result->num_rows > 0) {
+        echo 'Ten użytkownik jest już Twoim znajomym.';
+    } else {
+        // Dodawanie znajomego do bazy danych
+        $add_friend_query = "INSERT INTO friends (UserID, FriendID) VALUES ('$current_user_id', '$id_user')";
+        if ($conn->query($add_friend_query) === true) {
+            // Pobieranie informacji o dodanym znajomym
+            $get_friend_query = "SELECT user_name, user_surname FROM users WHERE id_user = '$id_user'";
+            $get_friend_result = $conn->query($get_friend_query);
+
+            if ($get_friend_result->num_rows > 0) {
+                $friend = $get_friend_result->fetch_assoc();
+                $added_friends[] = $friend;
+                $_SESSION['added_friends'] = $added_friends;
+            }
+        } else {
+            echo 'Błąd podczas dodawania przyjaciela: ' . $conn->error;
+        }
+    }
+}
+
+// Wyświetlanie dodanych przyjaciół
+if (isset($_SESSION['added_friends'])) {
+    $added_friends = $_SESSION['added_friends'];
+    echo '<div class="added-friends">';
+    foreach ($added_friends as $friend) {
+        echo $friend['user_name'] . ' ' . $friend['user_surname'];
+    }
+    echo '</div>';
+}
+
+?>
+      <footer>
         <h3>COPYRIGHT ©</h3>
         <form method="post" action="">
             <input type="submit" name="add_friends" value="Dodaj przyjaciół" class="right">
         </form>
     </footer>
 
-    <script>
-        let close = document.getElementById('close');
-        let tables = document.querySelectorAll('.contact');
-
-        close.addEventListener('click', () => {
-        tables.forEach((table) => {
-            table.style.display = 'none';
-        });
-        });
-    </script>
 </body>
 </html>
